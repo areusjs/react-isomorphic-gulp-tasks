@@ -1,0 +1,23 @@
+{
+  "name": "react-isomorphic-gulp-tasks",
+  "version": "1.0.0",
+  "description": "Gulp tasks for yeoman-react-isomorphic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/areusjs/react-isomorphic-gulp-tasks.git"
+  },
+  "keywords": [
+    "gulp",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/areusjs/react-isomorphic-gulp-tasks/issues"
+  },
+  "homepage": "https://github.com/areusjs/react-isomorphic-gulp-tasks"
+}
