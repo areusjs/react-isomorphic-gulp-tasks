@@ -6,42 +6,56 @@ var gulp = require('gulp'),
   browserify = require('browserify'),
   uglify = require('gulp-uglify');
 
-exports.toJs = function () {
-  return createStream(createBundler(false))
-    .pipe(buffer())
-    .pipe(uglify())
-    .pipe(gulp.dest('./example/_temp'));
+exports.toJs = function (sourcePath, destFilename) {
+  return toJs.bind(null, sourcePath, destFilename);
 };
 
-exports.toJsWatch = function () {
-  var bundler = createBundler(true);
+exports.toJsWatch = function (sourcePath, destFilename) {
+  return toJsWatch.bind(null, sourcePath, destFilename);
+};
+
+function toJs(sourcePath, destFilename) {
+  return createStream(createBundler({
+      file: sourcePath,
+      isDebug: false
+    }), destFilename)
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(gulp.dest('./dist'));
+}
+
+function toJsWatch(sourcePath, destFilename) {
+  var bundler = createBundler({
+      file: sourcePath,
+      isDebug: false
+    });
 
   function createBundlerStream() {
-    return createStream(bundler)
-      .pipe(gulp.dest('./example/_temp'));
+    return createStream(bundler, destFilename)
+      .pipe(gulp.dest('./dist'));
   }
 
   bundler = watchify(bundler);
   bundler.on('update', createBundlerStream);
   bundler.on('time', function (time) {
-    console.log('App.js built in: %dms', time);
+    console.log(destFilename + ' built in: %dms', time);
   });
 
   return createBundlerStream();
-};
+}
 
-function createBundler(isDebug) {
-  return browserify('./example/components/App/App.jsx', {
+function createBundler(config) {
+  return browserify(config.file, {
     cache: {},
     packageCache: {},
     fullPaths: true,
     transform: ['reactify'],
-    debug: isDebug
+    debug: config.isDebug
   });
 }
 
-function createStream(bundler) {
+function createStream(bundler, destFilename) {
   return bundler.bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('App.js'));
+    .pipe(source(destFilename));
 }
